@@ -42,7 +42,7 @@ Androidアプリのログを解析し、キーワードベースでハイライ�
 
 ### オンラインデモ
 
-https://yourusername.github.io/android-log-analyzer/
+https://sakamoth.github.io/LogAnalyzer/
 
 ## 貢献方法
 
@@ -53,4 +53,4 @@ https://yourusername.github.io/android-log-analyzer/
 
 ## ライセンス
 
-[MIT License](LICENSE)
+[MIT License](license.md)
