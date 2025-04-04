@@ -51,6 +51,9 @@ https://sakamoth.github.io/LogAnalyzer/
 3. 変更をコミットします
 4. プルリクエストを送信します
 
+## その他
+本WEBアプリはClaude 3.7 Sonnetで作成されました。
+
 ## ライセンス
 
 [MIT License](license.md)
