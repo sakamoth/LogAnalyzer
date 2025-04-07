@@ -323,6 +323,163 @@
                 animation: octocat-wave 560ms ease-in-out;
             }
         }
+        
+        /* New styles for notifications and modals */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            max-width: 350px;
+            padding: 12px 16px;
+            border-radius: 4px;
+            background-color: #333;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            animation: slide-in 0.3s ease-out;
+            font-size: 0.9rem;
+        }
+
+        .notification.success {
+            background-color: #22c55e;
+        }
+
+        .notification.error {
+            background-color: #ef4444;
+        }
+
+        .notification.info {
+            background-color: #3b82f6;
+        }
+        
+        .notification.warning {
+            background-color: #f59e0b;
+        }
+
+        .notification-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        @keyframes slide-in {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            max-width: 500px;
+            width: calc(100% - 32px);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-body {
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            line-height: 24px;
+            cursor: pointer;
+            padding: 0;
+        }
+        
+        /* Storage indicator */
+        .storage-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            padding: 8px;
+            background-color: #f8fafc;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        
+        .storage-bar {
+            flex-grow: 1;
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .storage-used {
+            position: absolute;
+            height: 100%;
+            background-color: #3b82f6;
+            border-radius: 4px;
+        }
+        
+        .storage-warning .storage-used {
+            background-color: #f59e0b;
+        }
+        
+        .storage-critical .storage-used {
+            background-color: #ef4444;
+        }
+        
+        .storage-text {
+            min-width: 80px;
+            text-align: right;
+        }
+        
+        .storage-type {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
     </style>
 </head>
 <body>
@@ -403,12 +560,50 @@
                     </button>
                 </div>
                 
+                <!-- Storage actions - New buttons for import/export -->
+                <div class="form-row" id="storageActions">
+                    <button id="importLogBtn" class="secondary small">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        インポート
+                    </button>
+                    <button id="exportLogBtn" class="secondary small">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        エクスポート
+                    </button>
+                    <button id="storageSettingsBtn" class="secondary small" style="margin-left: auto;">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Storage indicator -->
+                <div id="storageIndicator" class="storage-indicator">
+                    <div class="storage-type">LocalStorage:</div>
+                    <div class="storage-bar">
+                        <div class="storage-used" style="width: 0%"></div>
+                    </div>
+                    <div class="storage-text">0MB / 5MB</div>
+                </div>
+                
                 <div id="savedLogs" class="saved-logs">
                     <p class="placeholder-text">保存されたログはありません</p>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Hidden file input for importing -->
+    <input type="file" id="fileInput" accept=".json" style="display: none;">
 
     <script>
         // Main app state
@@ -424,7 +619,9 @@
             ],
             newKeyword: '',
             newColor: '#4CAF50',
-            isRegex: false
+            isRegex: false,
+            storageType: 'localStorage', // or 'indexedDB'
+            storageUsage: 0
         };
 
         // DOM Elements
@@ -440,48 +637,484 @@
             savedName: document.getElementById('savedName'),
             saveLog: document.getElementById('saveLog'),
             savedLogs: document.getElementById('savedLogs'),
-            loadSample: document.getElementById('loadSample')
+            loadSample: document.getElementById('loadSample'),
+            importLogBtn: document.getElementById('importLogBtn'),
+            exportLogBtn: document.getElementById('exportLogBtn'),
+            storageSettingsBtn: document.getElementById('storageSettingsBtn'),
+            fileInput: document.getElementById('fileInput'),
+            storageIndicator: document.getElementById('storageIndicator')
         };
+
+        // IndexedDB functionality
+        const idb = {
+            db: null,
+            storeName: 'logs',
+            
+            // Initialize the database
+            init() {
+                return new Promise((resolve, reject) => {
+                    if (this.db) {
+                        resolve(this.db);
+                        return;
+                    }
+                    
+                    const request = indexedDB.open('AndroidLogAnalyzer', 1);
+                    
+                    request.onerror = (event) => {
+                        reject('IndexedDB access denied');
+                    };
+                    
+                    request.onsuccess = (event) => {
+                        this.db = event.target.result;
+                        resolve(this.db);
+                    };
+                    
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains(this.storeName)) {
+                            db.createObjectStore(this.storeName, { keyPath: 'id' });
+                        }
+                    };
+                });
+            },
+            
+            // Save logs to IndexedDB
+            saveLogs(logs) {
+                return this.init()
+                    .then(db => {
+                        return new Promise((resolve, reject) => {
+                            const transaction = db.transaction([this.storeName], 'readwrite');
+                            const store = transaction.objectStore(this.storeName);
+                            
+                            // If logs is an array, save each log
+                            if (Array.isArray(logs)) {
+                                logs.forEach(log => {
+                                    store.put(log);
+                                });
+                            } else {
+                                // If logs is a single object, save it
+                                store.put(logs);
+                            }
+                            
+                            transaction.oncomplete = () => resolve(true);
+                            transaction.onerror = () => reject('IndexedDBへの保存に失敗しました');
+                        });
+                    });
+            },
+            
+            // Load all logs from IndexedDB
+            loadLogs() {
+                return this.init()
+                    .then(db => {
+                        return new Promise((resolve, reject) => {
+                            const transaction = db.transaction([this.storeName], 'readonly');
+                            const store = transaction.objectStore(this.storeName);
+                            const request = store.getAll();
+                            
+                            request.onsuccess = () => resolve(request.result);
+                            request.onerror = () => reject('IndexedDBからの読み込みに失敗しました');
+                        });
+                    });
+            },
+            
+            // Delete a log from IndexedDB
+            deleteLog(id) {
+                return this.init()
+                    .then(db => {
+                        return new Promise((resolve, reject) => {
+                            const transaction = db.transaction([this.storeName], 'readwrite');
+                            const store = transaction.objectStore(this.storeName);
+                            const request = store.delete(id);
+                            
+                            request.onsuccess = () => resolve(true);
+                            request.onerror = () => reject('IndexedDBからの削除に失敗しました');
+                        });
+                    });
+            },
+            
+            // Delete all logs from IndexedDB
+            clearLogs() {
+                return this.init()
+                    .then(db => {
+                        return new Promise((resolve, reject) => {
+                            const transaction = db.transaction([this.storeName], 'readwrite');
+                            const store = transaction.objectStore(this.storeName);
+                            const request = store.clear();
+                            
+                            request.onsuccess = () => resolve(true);
+                            request.onerror = () => reject('IndexedDBのクリアに失敗しました');
+                        });
+                    });
+            }
+        };
+
+        // Helper function to show notifications
+        function showNotification(message, type = 'info') {
+            // Remove any existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+            
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            // Add close button
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'notification-close';
+            closeBtn.innerHTML = '&times;';
+            closeBtn.addEventListener('click', () => notification.remove());
+            notification.appendChild(closeBtn);
+            
+            // Add to document
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Helper function to show modal
+        function showModal(title, content, buttons = []) {
+            // Create modal
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            
+            const modalContent = document.createElement('div');
+            modalContent.className = 'modal-content';
+            
+            const modalHeader = document.createElement('div');
+            modalHeader.className = 'modal-header';
+            
+            const modalTitle = document.createElement('h3');
+            modalTitle.textContent = title;
+            modalHeader.appendChild(modalTitle);
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'modal-close';
+            closeBtn.innerHTML = '&times;';
+            closeBtn.addEventListener('click', () => modal.remove());
+            modalHeader.appendChild(closeBtn);
+            
+            const modalBody = document.createElement('div');
+            modalBody.className = 'modal-body';
+            
+            if (typeof content === 'string') {
+                modalBody.innerHTML = content;
+            } else {
+                modalBody.appendChild(content);
+            }
+            
+            const modalFooter = document.createElement('div');
+            modalFooter.className = 'modal-footer';
+            
+            buttons.forEach(button => {
+                const btn = document.createElement('button');
+                btn.className = button.class || 'secondary';
+                btn.textContent = button.text;
+                btn.addEventListener('click', () => {
+                    if (button.action) {
+                        button.action();
+                    }
+                    modal.remove();
+                });
+                modalFooter.appendChild(btn);
+            });
+            
+            modalContent.appendChild(modalHeader);
+            modalContent.appendChild(modalBody);
+            modalContent.appendChild(modalFooter);
+            modal.appendChild(modalContent);
+            
+            document.body.appendChild(modal);
+            
+            return modal;
+        }
+
+        // Storage settings modal
+        function showStorageSettingsModal() {
+            const content = document.createElement('div');
+            
+            const description = document.createElement('p');
+            description.textContent = 'ログデータの保存方法を選択してください。大量のデータを扱う場合はIndexedDBをおすすめします。';
+            content.appendChild(description);
+            
+            const storageOptions = document.createElement('div');
+            storageOptions.style.marginTop = '16px';
+            
+            // LocalStorage option
+            const localStorageOption = document.createElement('div');
+            localStorageOption.style.marginBottom = '16px';
+            
+            const localStorageRadio = document.createElement('input');
+            localStorageRadio.type = 'radio';
+            localStorageRadio.id = 'localStorage';
+            localStorageRadio.name = 'storageType';
+            localStorageRadio.checked = state.storageType === 'localStorage';
+            
+            const localStorageLabel = document.createElement('label');
+            localStorageLabel.htmlFor = 'localStorage';
+            localStorageLabel.textContent = ' LocalStorage (最大5MB)';
+            localStorageLabel.style.fontWeight = 'bold';
+            localStorageLabel.style.marginLeft = '8px';
+            
+            const localStorageDesc = document.createElement('p');
+            localStorageDesc.textContent = '簡単な保存方法ですが、容量に制限があります。少量のデータに最適です。';
+            localStorageDesc.style.marginLeft = '24px';
+            localStorageDesc.style.fontSize = '0.875rem';
+            localStorageDesc.style.marginTop = '4px';
+            
+            localStorageOption.appendChild(localStorageRadio);
+            localStorageOption.appendChild(localStorageLabel);
+            localStorageOption.appendChild(localStorageDesc);
+            
+            // IndexedDB option
+            const indexedDBOption = document.createElement('div');
+            
+            const indexedDBRadio = document.createElement('input');
+            indexedDBRadio.type = 'radio';
+            indexedDBRadio.id = 'indexedDB';
+            indexedDBRadio.name = 'storageType';
+            indexedDBRadio.checked = state.storageType === 'indexedDB';
+            
+            const indexedDBLabel = document.createElement('label');
+            indexedDBLabel.htmlFor = 'indexedDB';
+            indexedDBLabel.textContent = ' IndexedDB (最大数百MB)';
+            indexedDBLabel.style.fontWeight = 'bold';
+            indexedDBLabel.style.marginLeft = '8px';
+            
+            const indexedDBDesc = document.createElement('p');
+            indexedDBDesc.textContent = '大容量データの保存に適しています。ブラウザによって容量上限は異なりますが、一般的に数百MBまで保存可能です。';
+            indexedDBDesc.style.marginLeft = '24px';
+            indexedDBDesc.style.fontSize = '0.875rem';
+            indexedDBDesc.style.marginTop = '4px';
+            
+            indexedDBOption.appendChild(indexedDBRadio);
+            indexedDBOption.appendChild(indexedDBLabel);
+            indexedDBOption.appendChild(indexedDBDesc);
+            
+            storageOptions.appendChild(localStorageOption);
+            storageOptions.appendChild(indexedDBOption);
+            content.appendChild(storageOptions);
+            
+            // Warning about data migration
+            const warning = document.createElement('p');
+            warning.innerHTML = '<strong>注意:</strong> ストレージタイプを変更すると、現在のデータが新しいストレージタイプにコピーされます。';
+            warning.style.marginTop = '16px';
+            warning.style.color = '#f59e0b';
+            content.appendChild(warning);
+            
+            const modal = showModal('ストレージ設定', content, [
+                {
+                    text: 'キャンセル',
+                    class: 'secondary'
+                },
+                {
+                    text: '適用',
+                    class: 'primary',
+                    action: () => {
+                        const newStorageType = document.querySelector('input[name="storageType"]:checked').id;
+                        if (newStorageType !== state.storageType) {
+                            changeStorageType(newStorageType);
+                        }
+                    }
+                }
+            ]);
+            
+            return modal;
+        }
+
+        // Change storage type
+        function changeStorageType(newType) {
+            const oldType = state.storageType;
+            state.storageType = newType;
+            
+            // Save storage preference
+            localStorage.setItem('storageType', newType);
+            
+            // Migrate data if needed
+            if (state.savedLogs.length > 0) {
+                if (newType === 'indexedDB') {
+                    // Migrate from localStorage to IndexedDB
+                    idb.saveLogs(state.savedLogs)
+                        .then(() => {
+                            showNotification('データをIndexedDBに移行しました', 'success');
+                            updateStorageIndicator();
+                        })
+                        .catch(error => {
+                            showNotification(error, 'error');
+                            state.storageType = oldType; // Revert on failure
+                        });
+                } else {
+                    // Migrate from IndexedDB to localStorage
+                    try {
+                        localStorage.setItem('savedLogs', JSON.stringify(state.savedLogs));
+                        showNotification('データをLocalStorageに移行しました', 'success');
+                        updateStorageIndicator();
+                    } catch (error) {
+                        showNotification('データが大きすぎるためLocalStorageに移行できません', 'error');
+                        state.storageType = oldType; // Revert on failure
+                    }
+                }
+            } else {
+                showNotification(`ストレージタイプを${newType === 'indexedDB' ? 'IndexedDB' : 'LocalStorage'}に変更しました`, 'success');
+                updateStorageIndicator();
+            }
+        }
+
+        // Calculate and update storage usage indicator
+        function updateStorageIndicator() {
+            if (state.storageType === 'localStorage') {
+                try {
+                    // Estimate localStorage usage
+                    const data = JSON.stringify(state.savedLogs);
+                    const sizeInBytes = new Blob([data]).size;
+                    const sizeInMB = sizeInBytes / (1024 * 1024);
+                    const percentUsed = (sizeInMB / 5) * 100; // 5MB is typical localStorage limit
+                    
+                    state.storageUsage = sizeInMB;
+                    
+                    // Update the indicator
+                    const storageBar = elements.storageIndicator.querySelector('.storage-bar');
+                    const storageUsed = storageBar.querySelector('.storage-used');
+                    const storageText = elements.storageIndicator.querySelector('.storage-text');
+                    const storageType = elements.storageIndicator.querySelector('.storage-type');
+                    
+                    storageType.textContent = 'LocalStorage:';
+                    storageUsed.style.width = `${Math.min(percentUsed, 100)}%`;
+                    storageText.textContent = `${sizeInMB.toFixed(2)}MB / 5MB`;
+                    
+                    // Add warning classes
+                    if (percentUsed > 80) {
+                        storageBar.className = 'storage-bar storage-critical';
+                        
+                        // If we're over 90%, show a warning notification
+                        if (percentUsed > 90) {
+                            showNotification('ストレージ容量がほぼいっぱいです。データを削除するか、IndexedDBに切り替えてください。', 'warning');
+                        }
+                    } else if (percentUsed > 60) {
+                        storageBar.className = 'storage-bar storage-warning';
+                    } else {
+                        storageBar.className = 'storage-bar';
+                    }
+                } catch (error) {
+                    console.error('Error calculating storage usage', error);
+                }
+            } else {
+                // For IndexedDB, we can't easily calculate size, so just show status
+                const storageType = elements.storageIndicator.querySelector('.storage-type');
+                const storageBar = elements.storageIndicator.querySelector('.storage-bar');
+                const storageUsed = storageBar.querySelector('.storage-used');
+                const storageText = elements.storageIndicator.querySelector('.storage-text');
+                
+                storageType.textContent = 'IndexedDB:';
+                storageUsed.style.width = '0%';
+                storageText.textContent = `${state.savedLogs.length} 件のログ`;
+                storageBar.className = 'storage-bar';
+            }
+        }
 
         // Initialize the app
         function init() {
-            // Load saved logs from localStorage
-            const storedLogs = localStorage.getItem('savedLogs');
-            if (storedLogs) {
-                state.savedLogs = JSON.parse(storedLogs);
-                renderSavedLogs();
+            // Check for storage type preference
+            const storedStorageType = localStorage.getItem('storageType');
+            if (storedStorageType) {
+                state.storageType = storedStorageType;
             }
-
+            
+            // Load saved logs from preferred storage
+            loadSavedLogs();
+            
             // Render initial keywords
             renderKeywords();
-
+            
+            // Check storage limitations
+            testStorageLimit();
+            
+            // Update storage indicator
+            updateStorageIndicator();
+            
             // Attach event listeners
             elements.logInput.addEventListener('input', (e) => {
                 state.logInput = e.target.value;
                 updateSaveButtonState();
             });
-
+            
             elements.processLog.addEventListener('click', processLog);
             elements.addKeyword.addEventListener('click', addKeyword);
             elements.saveLog.addEventListener('click', saveCurrentLog);
             elements.loadSample.addEventListener('click', loadSampleData);
-
+            
             elements.newKeyword.addEventListener('input', (e) => {
                 state.newKeyword = e.target.value;
             });
-
+            
             elements.newColor.addEventListener('input', (e) => {
                 state.newColor = e.target.value;
             });
-
+            
             elements.isRegex.addEventListener('change', (e) => {
                 state.isRegex = e.target.checked;
             });
-
+            
             elements.savedName.addEventListener('input', (e) => {
                 state.savedName = e.target.value;
                 updateSaveButtonState();
             });
+            
+            // Storage action buttons
+            elements.importLogBtn.addEventListener('click', () => {
+                elements.fileInput.click();
+            });
+            
+            elements.exportLogBtn.addEventListener('click', exportAllLogs);
+            
+            elements.storageSettingsBtn.addEventListener('click', showStorageSettingsModal);
+            
+            elements.fileInput.addEventListener('change', importLog);
+        }
+
+        // Load saved logs
+        function loadSavedLogs() {
+            if (state.storageType === 'indexedDB') {
+                idb.init()
+                    .then(() => idb.loadLogs())
+                    .then(logs => {
+                        state.savedLogs = logs || [];
+                        renderSavedLogs();
+                    })
+                    .catch(error => {
+                        console.error('Error loading from IndexedDB', error);
+                        // Fallback to localStorage
+                        state.storageType = 'localStorage';
+                        const storedLogs = localStorage.getItem('savedLogs');
+                        if (storedLogs) {
+                            try {
+                                state.savedLogs = JSON.parse(storedLogs);
+                            } catch (e) {
+                                state.savedLogs = [];
+                            }
+                        } else {
+                            state.savedLogs = [];
+                        }
+                        renderSavedLogs();
+                    });
+            } else {
+                const storedLogs = localStorage.getItem('savedLogs');
+                if (storedLogs) {
+                    try {
+                        state.savedLogs = JSON.parse(storedLogs);
+                    } catch (e) {
+                        state.savedLogs = [];
+                    }
+                } else {
+                    state.savedLogs = [];
+                }
+                renderSavedLogs();
+            }
         }
 
         // Helper function to escape special regex characters
@@ -691,14 +1324,120 @@
                 keywords: state.keywords
             };
             
-            state.savedLogs.push(newSavedLog);
-            localStorage.setItem('savedLogs', JSON.stringify(state.savedLogs));
+            if (state.storageType === 'indexedDB') {
+                // Save to IndexedDB
+                idb.saveLogs(newSavedLog)
+                    .then(() => {
+                        state.savedLogs.push(newSavedLog);
+                        
+                        state.savedName = '';
+                        elements.savedName.value = '';
+                        updateSaveButtonState();
+                        
+                        renderSavedLogs();
+                        updateStorageIndicator();
+                        
+                        showNotification('ログを保存しました', 'success');
+                    })
+                    .catch(error => {
+                        showNotification(error, 'error');
+                    });
+            } else {
+                // Save to localStorage with error handling
+                try {
+                    state.savedLogs.push(newSavedLog);
+                    
+                    // Estimate the size before saving
+                    const jsonData = JSON.stringify(state.savedLogs);
+                    const sizeInBytes = new Blob([jsonData]).size;
+                    const sizeInMB = sizeInBytes / (1024 * 1024);
+                    
+                    if (sizeInMB > 5) {
+                        // Remove the log we just tried to add
+                        state.savedLogs.pop();
+                        
+                        // Show error with size info
+                        showNotification(`データサイズが大きすぎます (${sizeInMB.toFixed(2)}MB)。5MB未満にする必要があります。`, 'error');
+                        
+                        // Show alternatives modal
+                        showStorageAlternativesModal(newSavedLog);
+                        return;
+                    }
+                    
+                    // Try to save
+                    localStorage.setItem('savedLogs', jsonData);
+                    
+                    state.savedName = '';
+                    elements.savedName.value = '';
+                    updateSaveButtonState();
+                    
+                    renderSavedLogs();
+                    updateStorageIndicator();
+                    
+                    showNotification('ログを保存しました', 'success');
+                } catch (error) {
+                    // Remove the log we just tried to add
+                    state.savedLogs.pop();
+                    
+                    // Show error
+                    showNotification('ローカルストレージへの保存に失敗しました。データが大きすぎる可能性があります。', 'error');
+                    
+                    // Show alternatives modal
+                    showStorageAlternativesModal(newSavedLog);
+                }
+            }
+        }
+
+        // Show storage alternatives modal
+        function showStorageAlternativesModal(logToSave) {
+            const content = `
+                <p>ローカルストレージの制限（5MB）を超えました。以下の方法を試してください：</p>
+                <ol>
+                    <li>古いログを削除して空き容量を増やす</li>
+                    <li>現在のデータをファイルにエクスポートする</li>
+                    <li>IndexedDB（より大きなストレージ）を使用する</li>
+                </ol>
+            `;
             
-            state.savedName = '';
-            elements.savedName.value = '';
-            updateSaveButtonState();
-            
-            renderSavedLogs();
+            showModal('ストレージ容量の上限に達しました', content, [
+                {
+                    text: 'キャンセル',
+                    class: 'secondary'
+                },
+                {
+                    text: 'エクスポート',
+                    class: 'primary',
+                    action: () => {
+                        exportLog(logToSave);
+                    }
+                },
+                {
+                    text: 'IndexedDBを使用',
+                    class: 'primary',
+                    action: () => {
+                        state.storageType = 'indexedDB';
+                        localStorage.setItem('storageType', 'indexedDB');
+                        
+                        // Save the log to IndexedDB
+                        idb.saveLogs(logToSave)
+                            .then(() => {
+                                state.savedLogs.push(logToSave);
+                                
+                                state.savedName = '';
+                                elements.savedName.value = '';
+                                updateSaveButtonState();
+                                
+                                renderSavedLogs();
+                                updateStorageIndicator();
+                                
+                                showNotification('IndexedDBに保存しました', 'success');
+                            })
+                            .catch(error => {
+                                showNotification(error, 'error');
+                            });
+                    }
+                }
+            ]);
         }
 
         // Load a saved log
@@ -717,9 +1456,29 @@
 
         // Delete a saved log
         function deleteSavedLog(id) {
-            state.savedLogs = state.savedLogs.filter(log => log.id !== id);
-            localStorage.setItem('savedLogs', JSON.stringify(state.savedLogs));
-            renderSavedLogs();
+            if (state.storageType === 'indexedDB') {
+                idb.deleteLog(id)
+                    .then(() => {
+                        state.savedLogs = state.savedLogs.filter(log => log.id !== id);
+                        renderSavedLogs();
+                        updateStorageIndicator();
+                        showNotification('ログを削除しました', 'success');
+                    })
+                    .catch(error => {
+                        showNotification(error, 'error');
+                    });
+            } else {
+                state.savedLogs = state.savedLogs.filter(log => log.id !== id);
+                
+                try {
+                    localStorage.setItem('savedLogs', JSON.stringify(state.savedLogs));
+                    renderSavedLogs();
+                    updateStorageIndicator();
+                    showNotification('ログを削除しました', 'success');
+                } catch (error) {
+                    showNotification('ログの削除中にエラーが発生しました', 'error');
+                }
+            }
         }
 
         // Render saved logs list
@@ -806,6 +1565,275 @@
             
             state.logInput = sampleLog;
             elements.logInput.value = sampleLog;
+        }
+
+        // Export a single log to a file
+        function exportLog(log) {
+            if (!log) return;
+            
+            const jsonData = JSON.stringify(log, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${log.name.replace(/[^a-z0-9]/gi, '_')}_${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Cleanup
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 0);
+            
+            showNotification('ログをエクスポートしました', 'success');
+        }
+
+        // Export all logs to a file
+        function exportAllLogs() {
+            if (state.savedLogs.length === 0) {
+                showNotification('エクスポートするログがありません', 'error');
+                return;
+            }
+            
+            const jsonData = JSON.stringify(state.savedLogs, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `all_logs_${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Cleanup
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 0);
+            
+            showNotification('すべてのログをエクスポートしました', 'success');
+        }
+
+        // Import log from a file
+        function importLog(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // Check if this is an array or a single log
+                    if (Array.isArray(importedData)) {
+                        // Multiple logs
+                        importMultipleLogs(importedData);
+                    } else {
+                        // Single log
+                        importSingleLog(importedData);
+                    }
+                } catch (error) {
+                    showNotification('ログのインポートに失敗しました: ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset the file input
+            event.target.value = '';
+        }
+        
+        // Import a single log
+        function importSingleLog(importedLog) {
+            // Validate the imported log structure
+            if (!importedLog.log || !importedLog.rawLog || !importedLog.keywords) {
+                throw new Error('無効なログファイル形式です');
+            }
+            
+            // Ensure unique ID
+            importedLog.id = Date.now();
+            
+            if (state.storageType === 'indexedDB') {
+                // Save to IndexedDB
+                idb.saveLogs(importedLog)
+                    .then(() => {
+                        state.savedLogs.push(importedLog);
+                        renderSavedLogs();
+                        updateStorageIndicator();
+                        showNotification('ログをインポートしました', 'success');
+                    })
+                    .catch(error => {
+                        showNotification(error, 'error');
+                    });
+            } else {
+                // Save to localStorage with error handling
+                try {
+                    state.savedLogs.push(importedLog);
+                    
+                    // Check size before saving
+                    const jsonData = JSON.stringify(state.savedLogs);
+                    const sizeInBytes = new Blob([jsonData]).size;
+                    const sizeInMB = sizeInBytes / (1024 * 1024);
+                    
+                    if (sizeInMB > 5) {
+                        // Remove the log we just tried to add
+                        state.savedLogs.pop();
+                        
+                        // Show error
+                        showNotification(`データサイズが大きすぎます (${sizeInMB.toFixed(2)}MB)。5MB未満にする必要があります。`, 'error');
+                        
+                        // Suggest using IndexedDB
+                        showStorageAlternativesModal(importedLog);
+                        return;
+                    }
+                    
+                    localStorage.setItem('savedLogs', jsonData);
+                    renderSavedLogs();
+                    updateStorageIndicator();
+                    showNotification('ログをインポートしました', 'success');
+                } catch (error) {
+                    // Remove the log we just tried to add
+                    state.savedLogs.pop();
+                    
+                    showNotification('ログのインポートに失敗しました: ' + error.message, 'error');
+                }
+            }
+        }
+        
+        // Import multiple logs
+        function importMultipleLogs(logs) {
+            if (!Array.isArray(logs) || logs.length === 0) {
+                showNotification('インポートするログがありません', 'error');
+                return;
+            }
+            
+            // Validate log structure
+            for (const log of logs) {
+                if (!log.log || !log.rawLog || !log.keywords) {
+                    throw new Error('無効なログファイル形式です');
+                }
+                
+                // Ensure unique ID
+                log.id = Date.now() + Math.floor(Math.random() * 1000);
+            }
+            
+            if (state.storageType === 'indexedDB') {
+                // Save to IndexedDB
+                idb.saveLogs(logs)
+                    .then(() => {
+                        state.savedLogs = [...state.savedLogs, ...logs];
+                        renderSavedLogs();
+                        updateStorageIndicator();
+                        showNotification(`${logs.length}件のログをインポートしました`, 'success');
+                    })
+                    .catch(error => {
+                        showNotification(error, 'error');
+                    });
+            } else {
+                // Save to localStorage with error handling
+                try {
+                    const combinedLogs = [...state.savedLogs, ...logs];
+                    
+                    // Check size before saving
+                    const jsonData = JSON.stringify(combinedLogs);
+                    const sizeInBytes = new Blob([jsonData]).size;
+                    const sizeInMB = sizeInBytes / (1024 * 1024);
+                    
+                    if (sizeInMB > 5) {
+                        // Show error
+                        showNotification(`データサイズが大きすぎます (${sizeInMB.toFixed(2)}MB)。5MB未満にする必要があります。`, 'error');
+                        
+                        // Show modal with options
+                        const content = document.createElement('div');
+                        
+                        const description = document.createElement('p');
+                        description.textContent = `インポートしようとしたログ (${logs.length}件) の合計サイズが大きすぎます。`;
+                        content.appendChild(description);
+                        
+                        const options = document.createElement('p');
+                        options.textContent = '以下のオプションがあります：';
+                        content.appendChild(options);
+                        
+                        const list = document.createElement('ul');
+                        list.innerHTML = `
+                            <li>古いログを削除して空き容量を増やす</li>
+                            <li>IndexedDBを使用する (数百MBまで保存可能)</li>
+                        `;
+                        content.appendChild(list);
+                        
+                        showModal('ストレージ容量の上限に達しました', content, [
+                            {
+                                text: 'キャンセル',
+                                class: 'secondary'
+                            },
+                            {
+                                text: 'IndexedDBを使用',
+                                class: 'primary',
+                                action: () => {
+                                    state.storageType = 'indexedDB';
+                                    localStorage.setItem('storageType', 'indexedDB');
+                                    
+                                    // Save the logs to IndexedDB
+                                    idb.saveLogs(logs)
+                                        .then(() => {
+                                            state.savedLogs = [...state.savedLogs, ...logs];
+                                            renderSavedLogs();
+                                            updateStorageIndicator();
+                                            showNotification(`${logs.length}件のログをインポートしました`, 'success');
+                                        })
+                                        .catch(error => {
+                                            showNotification(error, 'error');
+                                        });
+                                }
+                            }
+                        ]);
+                        return;
+                    }
+                    
+                    // If size is OK, save to localStorage
+                    state.savedLogs = combinedLogs;
+                    localStorage.setItem('savedLogs', jsonData);
+                    renderSavedLogs();
+                    updateStorageIndicator();
+                    showNotification(`${logs.length}件のログをインポートしました`, 'success');
+                } catch (error) {
+                    showNotification('ログのインポートに失敗しました: ' + error.message, 'error');
+                }
+            }
+        }
+        
+        // Check available storage space and show notification if needed
+        function checkStorageSpace() {
+            if (state.storageType === 'localStorage') {
+                try {
+                    // Estimate localStorage usage
+                    const data = JSON.stringify(state.savedLogs);
+                    const sizeInBytes = new Blob([data]).size;
+                    const sizeInMB = sizeInBytes / (1024 * 1024);
+                    const percentUsed = (sizeInMB / 5) * 100; // 5MB is typical localStorage limit
+                    
+                    // If we're nearing the limit, show a warning
+                    if (percentUsed > 80) {
+                        showNotification(`ローカルストレージの使用量が高いです: ${sizeInMB.toFixed(2)}MB (${percentUsed.toFixed(1)}%)。\nデータが失われる可能性があります。`, 'warning');
+                    }
+                } catch (error) {
+                    console.error('Error checking storage space', error);
+                }
+            }
+        }
+        
+        // Test localStorage limits
+        function testStorageLimit() {
+            try {
+                const testKey = '_test_storage_';
+                const testValue = 'a'.repeat(1024 * 1024); // 1MB
+                localStorage.setItem(testKey, testValue);
+                localStorage.removeItem(testKey);
+            } catch (e) {
+                // If we can't store a small test, localStorage is likely full or inaccessible
+                showNotification('ローカルストレージへのアクセスができないか、容量が不足しています。IndexedDBへの切り替えをお勧めします。', 'warning');
+            }
         }
 
         // Initialize the app when DOM is ready
