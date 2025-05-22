@@ -1144,6 +1144,12 @@
 
                         let match;
                         while ((match = regex.exec(line)) !== null) {
+                            // Prevent infinite loop when regex matches an empty string
+                            if (match[0].length === 0) {
+                                regex.lastIndex++;
+                                continue;
+                            }
+
                             lineMatches.push({
                                 start: match.index,
                                 end: match.index + match[0].length,
